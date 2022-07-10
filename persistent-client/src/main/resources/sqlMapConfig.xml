@@ -1,0 +1,14 @@
+<configuration>
+
+    <!--配置数据源-->
+    <dataSource>
+        <property name="driver" value="com.mysql.driver"/>
+        <!--本地数据库可以通过 '/' 来 替代 ip 和 port -->
+        <property name="url" value="jdbc:mysql:///mybatis"/>
+        <property name="username" value="root"/>
+        <property name="password" value="12345678"/>
+    </dataSource>
+
+    <!--存放mapper.xml 的 全路径，方便在持久层框架中通过 SqlMapperConfig.xml 获取到 UserMapper.xml 等路径-->
+    <mapper resource="UserMapper.xml"/>
+</configuration>
