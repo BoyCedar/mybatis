@@ -5,11 +5,11 @@
         2. resultType : 为了后面解析 sql 时，通过反射和内省技术，用全类名为 对应的对象赋值
         3. parameterType ：通过反射，取到参数全路径里面的某个值，为了知道获取某个值，所以要使用#{}，代替？
     -->
-    <select id="selectList" resultType="com.study.User">
+    <select id="selectList" resultType="com.study.pojo.User">
         SELECT * FROM user
     </select>
 
-    <select id="selectOne" parameterType="com.study.User" resultType="com.study.User">
+    <select id="selectOne" parameterType="com.study.pojo.User" resultType="com.study.pojo.User">
         SELECT * FROM user WHERE id = #{id} and username = #{username}
     </select>
 </mapper>
