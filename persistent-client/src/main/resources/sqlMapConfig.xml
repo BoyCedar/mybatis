@@ -11,4 +11,5 @@
 
     <!--存放mapper.xml 的 全路径，方便在持久层框架中通过 SqlMapperConfig.xml 获取到 UserMapper.xml 等路径-->
     <mapper resource="UserMapper.xml"/>
+    <mapper resource="UserDaoMapper.xml"/>
 </configuration>

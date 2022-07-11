@@ -3,6 +3,7 @@ package com.study.sqlsession;
 import com.study.pojo.Configuration;
 import com.study.pojo.MappedStatement;
 
+import java.lang.reflect.*;
 import java.util.List;
 
 public class DefaultSqlSession implements SqlSession {
@@ -30,5 +31,34 @@ public class DefaultSqlSession implements SqlSession {
         } else {
             throw  new RuntimeException("查询结果过多");
         }
+    }
+
+    @Override
+    public <T> T getMapper(Class<?> mapperClass) {
+        // 使用JDK动态代理来为Dao接口生成代理对象，并返回
+        Object proxyInstance = Proxy.newProxyInstance(DefaultSqlSession.class.getClassLoader(), new Class[]{mapperClass}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                // 底层都还是去执行JDBC代码 //根据不同情况，来调用selctList或者selectOne
+                // 准备参数 1：statmentid :sql语句的唯一标识：namespace.id= 接口全限定名.方法名
+                // 方法名：findAll
+                String name = method.getName();
+                String className = method.getDeclaringClass().getTypeName();
+                String statementId = className + "." + name;
+
+                // 准备参数2：params:args
+                // 获取被调用方法的返回值类型
+                Type genericReturnType = method.getGenericReturnType();
+
+                // 判断是否进行了 泛型类型参数化
+                if(genericReturnType instanceof ParameterizedType){
+                    List<Object> objects = selectList(statementId);
+                    return objects;
+                }
+                return selectOne(statementId, args);
+            }
+        });
+
+        return (T) proxyInstance;
     }
 }

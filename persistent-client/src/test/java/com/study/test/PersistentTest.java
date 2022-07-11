@@ -1,5 +1,6 @@
 package com.study.test;
 
+import com.study.dao.IUserDao;
 import com.study.io.Resources;
 import com.study.pojo.User;
 import com.study.sqlsession.SqlSession;
@@ -25,6 +26,18 @@ public class PersistentTest {
 
         List<User> userList = sqlSession.selectList("user.selectList");
         System.out.println(userList);
+
+
+        IUserDao userDao = sqlSession.getMapper(IUserDao.class);
+
+        User userMapper = new User();
+        userMapper.setUsername("Tom");
+        userMapper.setId(2);
+        User userMapperResult = userDao.findByCondition(user);
+        System.out.println(userMapperResult);
+
+        List<User> all = userDao.findAll();
+        System.out.println(all);
 
     }
 }
