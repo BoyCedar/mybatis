@@ -1,5 +1,8 @@
 package com.test;
 
+import com.study.dao.UserDAO;
+import com.study.dao.UserDAOImpl;
+import com.study.dao.UserMapper;
 import com.study.pojo.User;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -14,7 +17,7 @@ import java.util.List;
 public class MybatisTest {
 
     @Test
-    public void test() throws IOException {
+    public void testSelect() throws IOException {
         //加载核心配置文件
         InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
         //获得sqlSession工厂对象
@@ -22,10 +25,72 @@ public class MybatisTest {
         //获得sqlSession对象
         SqlSession sqlSession = sqlSessionFactory.openSession();
         //执行sql语句
-        List<User> userList = sqlSession.selectList("userMapper.findAll");
+        List<User> userList = sqlSession.selectList("com.study.dao.UserMapper.findAll");
         //打印结果
         System.out.println(userList);
         //释放资源
         sqlSession.close();
+    }
+
+
+    @Test
+    public void testInsert() throws IOException {
+        InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId(3);
+        user.setUsername("Jack");
+        sqlSession.insert("com.study.dao.UserMapper.saveUser",user);
+        // 提交事务
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void testUpdate() throws IOException {
+        InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        User user = new User();
+        user.setId(2);
+        user.setUsername("Lucy");
+        sqlSession.insert("com.study.dao.UserMapper.updateUser",user);
+        // 提交事务
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+
+    @Test
+    public void testDelete() throws IOException {
+        InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        sqlSession.insert("com.study.dao.UserMapper.deleteUser",3);
+        // 提交事务
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void testDAO() throws IOException {
+        UserDAO userDAO = new UserDAOImpl();
+        List<User> userList = userDAO.findAll();
+        System.out.println(userList);
+    }
+
+
+    @Test
+    public void testProxy() throws IOException {
+        InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        User user = userMapper.findById(1);
+
+        System.out.println(user);
+
     }
 }
