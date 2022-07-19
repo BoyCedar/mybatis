@@ -6,18 +6,23 @@
 <!--namespace : 命名空间，与id组成sql的唯一标识-->
 <mapper namespace="com.study.dao.UserMapper">
 
+
+    <sql id="selectUser">
+        SELECT * FROM  user
+    </sql>
+
     <!--resultType ：表明返回值类型-->
-    <select id="findAll" resultType="com.study.pojo.User">
-        select * from user
+    <select id="findAll" resultType="user">
+        <include refid="selectUser"/>
     </select>
 
     <!--添加用户   parameterType：参数类型-->
-    <insert id="saveUser" parameterType="com.study.pojo.User">
+    <insert id="saveUser" parameterType="user">
         INSERT INTO user VALUES (#{id},#{username})
     </insert>
 
     <!--修改-->
-    <update id="updateUser" parameterType="com.study.pojo.User">
+    <update id="updateUser" parameterType="user">
         UPDATE user SET username = #{username} WHERE id = #{id}
     </update>
 
@@ -26,7 +31,31 @@
         DELETE FROM user where id = #{id}
     </delete>
 
-    <select id="findById" parameterType="int" resultType="com.study.pojo.User">
-        SELECT  * FROM  user where  id = #{id}
+    <select id="findById" parameterType="int" resultType="user">
+        <include refid="selectUser"/>
+        where  id = #{id}
     </select>
+
+    <select id="findByCondition" parameterType="user" resultType="user">
+        <include refid="selectUser"/>
+        <where>
+            <if test="id !=null">
+                and id = #{id}
+            </if>
+            <if test="username !=null">
+                and username = #{username}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="findByIds" parameterType="list" resultType="user">
+        <include refid="selectUser"/>
+        <where>
+            <foreach collection="array" open="id in (" close=")" item="id" separator=",">
+                #{id}
+            </foreach>
+        </where>
+    </select>
+
 </mapper>
